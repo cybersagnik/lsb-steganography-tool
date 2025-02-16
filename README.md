@@ -24,21 +24,21 @@ Run the tool using the command line.
 
 ### 🖼️ **Embedding a Message**
 ```bash
-python cli.py encode <image_path> --message "Your secret message" --output <output_image>
+python main.py encode <image_path> --message "Your secret message" --output <output_image>
 ```
 📌 **Example:**
 ```bash
-python cli.py encode input.png --message "Hello, World!" --output output.png
+python main.py encode input.png --message "Hello, World!" --output output.png
 ```
 ✅ This will create `output.png` with the hidden message.
 
 ### 🎭 **Extracting a Message**
 ```bash
-python cli.py decode <image_path>
+python main.py decode <image_path>
 ```
 📌 **Example:**
 ```bash
-python cli.py decode output.png
+python main.py decode output.png
 ```
 ✅ This will print the extracted hidden message.
 
@@ -54,7 +54,7 @@ python cli.py decode output.png
 ### **3️⃣ Decoder (decoder.py)**
 - Extracts a hidden message from an encoded image
 
-### **4️⃣ CLI Interface (cli.py)**
+### **4️⃣ CLI Interface (main.py)**
 - Provides a user-friendly command-line interface
 - Displays progress bars and colored output
 
