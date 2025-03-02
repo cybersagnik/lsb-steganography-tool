@@ -1,53 +1,45 @@
 import argparse
-import time
-from tqdm import tqdm
+from encoder import Encoder
+from decoder import Decoder
+from image_processor import ImageProcessor
 from colorama import Fore, Style, init
-from steganography import Steganography
 
-# Initialize colorama
-init(autoreset=True)
-
-def print_success(msg):
-    print(Fore.GREEN + "✅ " + Style.BRIGHT + msg)
-
-def print_error(msg):
-    print(Fore.RED + "❌ " + Style.BRIGHT + msg)
-
-def print_info(msg):
-    print(Fore.CYAN + "ℹ️ " + Style.BRIGHT + msg)
-
-def show_progress(task="Processing", duration=3):
-    """Displays a progress bar for the given task."""
-    print_info(f"{task}... Please wait ⏳")
-    for _ in tqdm(range(100), desc="🚀 Progress", ncols=100):
-        time.sleep(duration / 100)  # Simulate processing
+init(autoreset=True)  # Enable color support
 
 def main():
-    parser = argparse.ArgumentParser(description="🔒 LSB Steganography Tool 🎭")
+    parser = argparse.ArgumentParser(description="🔐 LSB Steganography Tool")
     parser.add_argument("mode", choices=["encode", "decode"], help="Choose mode: encode or decode")
-    parser.add_argument("image", help="🖼️ Path to the image file")
-    parser.add_argument("--message", help="💬 Message to hide (required for encoding)")
-    parser.add_argument("--output", help="💾 Output image path (required for encoding)")
+    parser.add_argument("image", help="Path to the image file")
+    parser.add_argument("--message", help="Message to hide (only for encoding)")
+    parser.add_argument("--output", help="Output image file (only for encoding)")
+    parser.add_argument("--password", help="Password for encrypting and decrypting message")
 
     args = parser.parse_args()
+    processor = ImageProcessor(args.image)
 
-    steg = Steganography(args.image)
+    if not processor.load_image():
+        print(Fore.RED + "❌ Failed to load image. Exiting.")
+        return
 
     if args.mode == "encode":
         if not args.message or not args.output:
-            print_error("Encoding requires a message and an output image path.")
+            print(Fore.YELLOW + "⚠️ Please provide a message and output filename for encoding.")
             return
-        show_progress("🔏 Embedding message")
-        steg.embed_message(args.message, args.output)
-        print_success(f"🎉 Message successfully embedded in {args.output}")
+        if not args.password:
+        	  print(Fore.YELLOW + "⚠️ Please provide a key for encrypting the message.")
+        	  return
+        encoder = Encoder(processor, args.password)
+        if encoder.embed_message(args.message):
+            processor.save_image(args.output)
 
     elif args.mode == "decode":
-        show_progress("🔍 Extracting message")
-        hidden_message = steg.extract_message()
+        if not args.password :
+           print(Fore.YELLOW + "⚠️ Cannot Decode without password.")
+           return;
+        decoder = Decoder(processor, args.password)
+        hidden_message = decoder.extract_message()
         if hidden_message:
-            print_success(f"📜 Extracted message: {hidden_message}")
-        else:
-            print_error("😞 No hidden message found!")
+            print(Fore.GREEN + f"📜 Hidden Message: {hidden_message}")
 
 if __name__ == "__main__":
     main()
