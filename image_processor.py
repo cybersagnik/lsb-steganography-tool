@@ -1,38 +1,39 @@
-from PIL import Image
 import numpy as np
+from PIL import Image
+import os
 
 class ImageProcessor:
-	def __init__(self , image_path: str):
-		"""Initialize the ImageProcessor with the given image file path."""
-		self.image_path = image_path
-		self.image = None
-		self.pixel_matrix = None
+    def __init__(self, image_path: str):
+        """Initialize with an image path."""
+        self.image_path = image_path
+        self.pixel_matrix = None
 
-	def load_image(self):
-		"""Load the image and convert it into a pixel matrix."""
-		try:
-			self.image = Image.open(self.image_path).convert("RGB")
-			self.pixel_matrix = np.array(self.image)
-			return True
-		except Exception as e :
-			print(f"Error Loading image : {e}")
-			return False
+    def load_image(self):
+        """Loads an image and converts it into a pixel matrix."""
+        try:
+            if not os.path.exists(self.image_path):
+                raise FileNotFoundError(f"❌ Error: File '{self.image_path}' not found.")
 
-	def get_pixel_matrix(self):
-		"""Return the pixel matrix of the loaded image"""
-		if self.pixel_matrix is not None:
-			return self.pixel_matrix
-		else:
-			print("Image not loaded . Call load_image() first")
-			return None
-	def save_image(self, output_path: str):
-		"""Save the modified pixel matrix back as an image."""
-		try:
-			if self.pixel_matrix is not None:
-				new_image = Image.fromarray(self.pixel_matrix.astype(np.uint8))
-				new_image.save(output_path)
-				print(f"Image saved successfully at {output_path}")
-			else:
-				print("No pixel matrix to save")
-		except Exception as e :
-			print(f"Error saving image: {e}")
+            with Image.open(self.image_path) as img:
+                img = img.convert("RGB")  # Ensure it's in RGB mode
+                self.pixel_matrix = np.array(img)
+            print(f"✅ Image '{self.image_path}' loaded successfully.")
+            return True
+
+        except FileNotFoundError as fe:
+            print(fe)
+        except Exception as e:
+            print(f"⚠️ Unexpected Error: {e}")
+        return False
+
+    def save_image(self, output_path: str):
+        """Saves the pixel matrix as an image."""
+        try:
+            if self.pixel_matrix is None:
+                raise RuntimeError("❌ Error: No image data to save.")
+
+            img = Image.fromarray(self.pixel_matrix)
+            img.save(output_path)
+            print(f"✅ Image saved as '{output_path}'.")
+        except Exception as e:
+            print(f"⚠️ Error saving image: {e}")
