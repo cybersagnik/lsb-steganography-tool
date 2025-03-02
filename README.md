@@ -4,11 +4,11 @@
 This **LSB Steganography Tool** allows you to hide and extract secret messages inside image files using **Least Significant Bit (LSB) encoding**. It provides a command-line interface (CLI) for ease of use.
 
 ## 🚀 Features
-✅ Embed secret messages into images using LSB encoding.
-✅ Extract hidden messages from encoded images. 
-✅ Supports PNG and BMP image formats.
-✅ Supports Cryptography.
-✅ CLI with progress bars and colored outputs for better UX. 
+- ✅ Embed secret messages into images using LSB encoding.
+- ✅ Extract hidden messages from encoded images. 
+- ✅ Supports PNG and BMP image formats.
+- ✅ Supports Cryptography.
+- ✅ CLI with progress bars and colored outputs for better UX. 
 
 ---
 ## 📥 Installation
