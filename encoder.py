@@ -1,21 +1,38 @@
-from image_processor  import ImageProcessor
-
+from tqdm import tqdm
+from image_processor import ImageProcessor
+from encrypy_decrypt import AESCipher
 class Encoder:
-	def __init__(self, image_processor: ImageProcessor):
-		"""Initialize the Encoder with an ImageProcessor instance"""
-		self.image_processor = image_processor
+    def __init__(self, image_processor: ImageProcessor, encryption_key: str):
+        """Initialize Encoder with an ImageProcessor instance."""
+        if not isinstance(image_processor, ImageProcessor):
+            raise TypeError("Expected an instance of ImageProcessor.")
+        self.image_processor = image_processor
+        self.aes_cipher = AESCipher(encryption_key)
 
-	def embed_message(self , message: str):
-		"""Embed a text message into the least significant bits of the image"""
-		binary_msg = ''.join(format(ord(char) , '08b') for char in message) + '11111111' #EOF
-		flat_pixels = self.image_processor.pixel_matrix.flatten()
-		if len(binary_msg) > len(flat_pixels):
-			print("Message is too large to be embedded in the image")
-			return False
+    def embed_message(self, message: str):
+        """Embeds a message into the LSB of an image."""
+        try:
+            if not isinstance(message, str):
+                raise ValueError("❌ Error: Message must be a string.")
 
-		for i in range(len(binary_msg)):
-			flat_pixels[i] = (flat_pixels[i] & ~1) | int(binary_msg[i])
+            if self.image_processor.pixel_matrix is None:
+                raise RuntimeError("❌ Error: Image not loaded. Please load an image first.")
 
-		self.image_processor.pixel_matrix = flat_pixels.reshape(self.image_processor.pixel_matrix.shape)
-		print("Message embedded successfully")
-		return True
+            encrypted_msg = self.aes_cipher.encrypt_message(message)
+            binary_message = ''.join(format(ord(char), '08b') for char in encrypted_msg) + '1111111111111110'
+            flat_pixels = self.image_processor.pixel_matrix.flatten()
+
+            if len(binary_message) > len(flat_pixels):
+                raise ValueError("❌ Error: Message is too large for this image.")
+
+            # Embed message bit-by-bit
+            for i in tqdm(range(len(binary_message)), desc="Embedding", unit="bit"):
+                flat_pixels[i] = (flat_pixels[i] & ~1) | int(binary_message[i])
+
+            self.image_processor.pixel_matrix = flat_pixels.reshape(self.image_processor.pixel_matrix.shape)
+            print("✅ Message embedded successfully.")
+            return True
+
+        except Exception as e:
+            print(f"⚠️ Unexpected Error: {e}")
+            return False
