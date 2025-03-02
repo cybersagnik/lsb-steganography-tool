@@ -4,11 +4,11 @@
 This **LSB Steganography Tool** allows you to hide and extract secret messages inside image files using **Least Significant Bit (LSB) encoding**. It provides a command-line interface (CLI) for ease of use.
 
 ## 🚀 Features
-✅ Embed secret messages into images using LSB encoding 
-✅ Extract hidden messages from encoded images  
-✅ Supports PNG and BMP image formats
-✅ Supports Cryptography ( Providing Extra layer of Secuitry )
-✅ CLI with progress bars and colored outputs for better UX  
+✅ Embed secret messages into images using LSB encoding.
+✅ Extract hidden messages from encoded images. 
+✅ Supports PNG and BMP image formats.
+✅ Supports Cryptography.
+✅ CLI with progress bars and colored outputs for better UX. 
 
 ---
 ## 📥 Installation
@@ -55,7 +55,7 @@ python main.py decode output.png --password "Random123"
 ### **3️⃣ Decoder (decoder.py)**
 - Extracts a hidden message from an encoded image
   
-### **5️⃣ Encryptor_Decryptor (encrypy_decrypt.py)
+### **5️⃣ Encryptor_Decryptor (encrypy_decrypt.py)**
 - Encrypts the message using AES-256 algorithm by the key given by user as password.
 - Decrypts the message given the password.
   
